@@ -1,0 +1,42 @@
+# Include documentation
+include LICENSE
+include README.md
+include TERMS_OF_USE.md
+include CHANGELOG.md
+include CONTRIBUTING.md
+
+# Include configuration files
+include pyproject.toml
+include requirements.txt
+include requirements-dev.txt
+
+# Include tests
+recursive-include tests *.py
+recursive-include tests/fixtures *.html *.json
+
+# Include docs
+recursive-include docs *.md
+
+# Include examples
+recursive-include examples *.py *.sh
+
+# Exclude development and build artifacts
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude * .DS_Store
+recursive-exclude * .pytest_cache
+recursive-exclude * .mypy_cache
+recursive-exclude * .ruff_cache
+exclude .gitignore
+exclude .dockerignore
+exclude Dockerfile
+exclude docker-compose.yml
+
+# Exclude CI/CD configuration
+recursive-exclude .github *
+
+# Exclude build artifacts
+exclude MANIFEST.in
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__

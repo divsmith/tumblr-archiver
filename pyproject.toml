@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tumblr-archiver"
+version = "0.1.0"
+description = "CLI tool for archiving media from Tumblr blogs with Internet Archive fallback"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Parker", email = "parker@example.com" }
+]
+keywords = ["tumblr", "archiver", "media", "download", "backup"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "click>=8.1.7",
+    "aiohttp>=3.9.0",
+    "aiofiles>=23.2.1",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=5.0.0",
+    "tenacity>=8.2.0",
+    "aiolimiter>=1.1.0",
+    "pydantic>=2.5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.12.0",
+    "mypy>=1.7.0",
+    "ruff>=0.1.8",
+    "types-aiofiles>=23.2.0",
+]
+
+[project.scripts]
+tumblr-archiver = "tumblr_archiver.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/parker/tumblr-archiver"
+Repository = "https://github.com/parker/tumblr-archiver"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tumblr_archiver"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

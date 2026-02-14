@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Tumblr Blog</title>
+</head>
+<body>
+    <div id="content">
+        <!-- Post 1: Photo post with single image -->
+        <article class="post" data-post-id="123456789" id="post-123456789">
+            <div class="post-header">
+                <time datetime="2024-01-15T10:30:00+00:00">January 15, 2024</time>
+                <a href="/post/123456789/cool-photo" class="permalink">Permalink</a>
+            </div>
+            <div class="post-content">
+                <p>Check out this cool photo!</p>
+                <img src="https://64.media.tumblr.com/abc123def456/tumblr_xyz_500.jpg" 
+                     data-highres="https://64.media.tumblr.com/abc123def456/tumblr_xyz_1280.jpg"
+                     alt="Cool photo">
+            </div>
+        </article>
+
+        <!-- Post 2: Reblogged photo post -->
+        <article class="post is-reblog" data-post-id="987654321" id="post-987654321">
+            <div class="post-header">
+                <time datetime="2024-01-14T15:20:00+00:00" title="2024-01-14 15:20">January 14, 2024</time>
+                <a href="/post/987654321" class="post-link">Permalink</a>
+                <div class="reblogged-from">
+                    Reblogged from <a href="https://otherblog.tumblr.com">otherblog</a>
+                </div>
+            </div>
+            <div class="post-content">
+                <p>Reblogging this awesome post!</p>
+                <img src="https://65.media.tumblr.com/xyz789abc123/tumblr_abc_400.png"
+                     data-src="https://65.media.tumblr.com/xyz789abc123/tumblr_abc_1280.png"
+                     alt="Reblogged image">
+            </div>
+        </article>
+
+        <!-- Post 3: Photoset with multiple images -->
+        <article class="post" data-post-id="555666777" data-timestamp="1705238400">
+            <div class="post-header">
+                <time datetime="2024-01-14T08:00:00Z">January 14, 2024</time>
+                <a href="/post/555666777/my-photoset" class="permalink">Link</a>
+            </div>
+            <div class="post-content">
+                <p>My vacation photos!</p>
+                <div class="photoset" data-photoset='[{"url":"https://64.media.tumblr.com/photo1/tumblr_xyz_1280.jpg"},{"url":"https://64.media.tumblr.com/photo2/tumblr_abc_1280.jpg"},{"url":"https://64.media.tumblr.com/photo3/tumblr_def_1280.jpg"}]'>
+                    <img src="https://64.media.tumblr.com/photo1/tumblr_xyz_500.jpg" alt="Photo 1">
+                    <img src="https://64.media.tumblr.com/photo2/tumblr_abc_500.jpg" alt="Photo 2">
+                    <img src="https://64.media.tumblr.com/photo3/tumblr_def_500.jpg" alt="Photo 3">
+                </div>
+            </div>
+        </article>
+
+        <!-- Post 4: Video post -->
+        <article class="post" data-post-id="111222333">
+            <div class="post-header">
+                <time datetime="2024-01-13T12:00:00+00:00">January 13, 2024</time>
+                <a href="/post/111222333" class="permalink">Permalink</a>
+            </div>
+            <div class="post-content">
+                <p>Check out this video!</p>
+                <video controls poster="https://64.media.tumblr.com/video_thumb.jpg">
+                    <source src="https://64.media.tumblr.com/abcdef123456/tumblr_video123.mp4" type="video/mp4">
+                </video>
+            </div>
+        </article>
+
+        <!-- Post 5: Animated GIF post -->
+        <article class="post" data-post-id="444555666" id="post-444555666">
+            <div class="post-header">
+                <time datetime="2024-01-12T18:45:00+00:00">January 12, 2024</time>
+                <a href="/post/444555666/funny-gif" class="permalink">Permalink</a>
+            </div>
+            <div class="post-content">
+                <p>This made me laugh!</p>
+                <img src="https://64.media.tumblr.com/gifimage/tumblr_funny123.gif" alt="Funny GIF">
+            </div>
+        </article>
+
+        <!-- Post 6: Text post (no media) -->
+        <article class="post" data-post-id="777888999">
+            <div class="post-header">
+                <time datetime="2024-01-11T09:30:00+00:00">January 11, 2024</time>
+                <a href="/post/777888999/just-thoughts" class="permalink">Permalink</a>
+            </div>
+            <div class="post-content">
+                <p>Just some thoughts about life, the universe, and everything.</p>
+                <p>No media here, just words.</p>
+            </div>
+        </article>
+
+        <!-- Post 7: Post with external video embed (YouTube) -->
+        <article class="post" data-post-id="222333444">
+            <div class="post-header">
+                <time datetime="2024-01-10T14:15:00Z">January 10, 2024</time>
+                <a href="/post/222333444" class="permalink">Permalink</a>
+            </div>
+            <div class="post-content">
+                <p>Great video!</p>
+                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                        width="560" height="315" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </article>
+
+        <!-- Post 8: Image with background-image style -->
+        <article class="post" data-post-id="333444555">
+            <div class="post-header">
+                <time datetime="2024-01-09T11:20:00+00:00">January 9, 2024</time>
+                <a href="/post/333444555" class="permalink">Permalink</a>
+            </div>
+            <div class="post-content">
+                <div class="photo-header" style="background-image: url('https://64.media.tumblr.com/bgimage/tumblr_bg123_1280.jpg'); height: 300px;">
+                    <h2>Stylish Background</h2>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <!-- Pagination indicator -->
+    <div class="pagination">
+        <a href="/page/2" class="next">Next Page</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Development dependencies for tumblr-archiver
+
+# Include runtime dependencies
+-r requirements.txt
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+aioresponses==0.7.6
+
+# Code formatting and linting
+black==23.12.1
+ruff==0.1.11
+
+# Type checking
+mypy==1.7.1
+types-aiofiles==23.2.0.20240106
+
+# Development tools
+ipython==8.19.0
+ipdb==0.13.13

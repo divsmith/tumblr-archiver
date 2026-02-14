@@ -62,7 +62,9 @@ The tool automatically installs the following dependencies:
    - **Application description**: Brief description
    - **Default callback URL**: `http://localhost`
 4. Click "Register"
-5. Copy the **OAuth Consumer Key** (this is your API key)
+5. Copy the **OAuth Consumer Key** (this tool uses it as your API key)
+
+Note: Tumblr also shows an **OAuth Consumer Secret**. That secret is only needed for fully signed OAuth 1.0a requests (user-authenticated/private endpoints). This archiver currently uses Tumblr's public-read API key mode (adds `api_key=...` to requests) and does not require or use the secret.
 
 ### 2. Set Your API Key
 
@@ -127,8 +129,8 @@ tumblr-archiver archive --url <blog-url> [OPTIONS]
 
 **Authentication:**
 - `--tumblr-api-key TEXT` — Tumblr API key (or set `TUMBLR_API_KEY` env var)
-- `--oauth-consumer-key TEXT` — OAuth consumer key (optional)
-- `--oauth-token TEXT` — OAuth token (optional)
+
+OAuth 1.0a (consumer secret / access tokens) is not currently used by this tool.
 
 **Logging & Debugging:**
 - `--dry-run` — Simulate operations without downloading
@@ -209,8 +211,8 @@ tumblr-archiver config --verbose
 The tool recognizes the following environment variables:
 
 - `TUMBLR_API_KEY` — Tumblr API key (required)
-- `TUMBLR_OAUTH_CONSUMER_KEY` — OAuth consumer key (optional)
-- `TUMBLR_OAUTH_TOKEN` — OAuth token (optional)
+
+Tumblr labels `TUMBLR_API_KEY` as the "OAuth Consumer Key" on the app registration page.
 
 You can set these in your shell, or create a `.env` file in your working directory:
 

@@ -319,15 +319,15 @@ class TestValidation:
             ConfigLoader.validate(config)
     
     def test_validate_oauth_credentials(self):
-        """Test that OAuth credentials can replace API key."""
+        """Test that OAuth credentials do NOT replace the API key."""
         config = ArchiverConfig(
             blog_url="example",
             output_dir=Path("/tmp/test"),
             oauth_consumer_key="consumer",
             oauth_token="token"
         )
-        # Should not raise
-        ConfigLoader.validate(config)
+        with pytest.raises(ConfigurationError, match="tumblr_api_key is required"):
+            ConfigLoader.validate(config)
     
     def test_validate_invalid_rate_limit(self):
         """Test that rate_limit <= 0 fails validation."""

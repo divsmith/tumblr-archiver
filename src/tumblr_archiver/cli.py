@@ -55,10 +55,10 @@ def main(ctx):
               help='Tumblr API key (or set TUMBLR_API_KEY environment variable)')
 @click.option('--oauth-consumer-key',
               envvar='TUMBLR_OAUTH_CONSUMER_KEY',
-              help='OAuth consumer key for authenticated access')
+              help='Reserved for future OAuth support (currently unused)')
 @click.option('--oauth-token',
               envvar='TUMBLR_OAUTH_TOKEN',
-              help='OAuth token for authenticated access')
+              help='Reserved for future OAuth support (currently unused)')
 @click.option('--dry-run', is_flag=True, default=False,
               help='Simulate operations without actually downloading')
 @click.option('--verbose', '-v', is_flag=True, default=False,

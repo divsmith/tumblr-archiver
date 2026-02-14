@@ -289,12 +289,11 @@ class ConfigLoader:
         
         # Validate API credentials
         if not config.tumblr_api_key:
-            if not (config.oauth_consumer_key and config.oauth_token):
-                errors.append(
-                    "Either tumblr_api_key or both oauth_consumer_key and "
-                    "oauth_token must be provided. "
-                    "Get your API key from: https://www.tumblr.com/oauth/apps"
-                )
+            errors.append(
+                "tumblr_api_key is required. Tumblr labels this value as the "
+                "'OAuth Consumer Key' on the app registration page. "
+                "Get your API key from: https://www.tumblr.com/oauth/apps"
+            )
         
         # Validate numeric ranges
         if config.rate_limit <= 0:

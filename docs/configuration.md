@@ -28,7 +28,7 @@ Configuration can be loaded from (in order of precedence):
 
 3. Run the archiver:
    ```bash
-   tumblr-archiver archive example
+  tumblr-archiver archive --url example
    ```
 
 ### Option 2: Using a Config File
@@ -43,16 +43,20 @@ Configuration can be loaded from (in order of precedence):
    }
    ```
 
-2. Run with config file:
-   ```bash
-   tumblr-archiver archive --config config.json
-   ```
+2. Use the config file programmatically (the CLI currently accepts environment variables and flags):
+  ```python
+  from pathlib import Path
+  from tumblr_archiver.config import load_config
+
+  config = load_config(config_file=Path("config.json"), load_env=True)
+  ```
 
 ### Option 3: Using CLI Arguments Only
 
 ```bash
-tumblr-archiver archive example \
-  --api-key YOUR_API_KEY \
+tumblr-archiver archive \
+  --url example \
+  --tumblr-api-key YOUR_API_KEY \
   --output ./downloads \
   --verbose
 ```
@@ -64,7 +68,7 @@ tumblr-archiver archive example \
 | Option | Type | Description |
 |--------|------|-------------|
 | `blog_url` | string | Tumblr blog URL or username to archive |
-| `tumblr_api_key` | string | Tumblr API key (or OAuth credentials) |
+| `tumblr_api_key` | string | Tumblr API key (Tumblr labels this as the "OAuth Consumer Key") |
 
 ### Input/Output
 
@@ -77,8 +81,8 @@ tumblr-archiver archive example \
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `tumblr_api_key` | string | - | Tumblr API key |
-| `oauth_consumer_key` | string | - | OAuth consumer key (alternative) |
-| `oauth_token` | string | - | OAuth token (alternative) |
+| `oauth_consumer_key` | string | - | Reserved for future OAuth support (not currently used) |
+| `oauth_token` | string | - | Reserved for future OAuth support (not currently used) |
 
 Get your API key from: https://www.tumblr.com/oauth/apps
 
@@ -212,7 +216,7 @@ save_config(config, Path('my-config.json'))
 The configuration system validates all settings:
 
 - **Blog URL**: Must be valid format
-- **API Key**: Required (unless OAuth provided)
+- **API Key**: Required
 - **Rate Limit**: Must be > 0
 - **Concurrency**: Must be >= 1
 - **Wayback Max Snapshots**: Must be >= 1
@@ -227,8 +231,7 @@ Validation errors provide clear messages and suggestions for fixes.
 
 ```
 ConfigurationError: Configuration validation failed:
-  - Either tumblr_api_key or both oauth_consumer_key and oauth_token must be provided.
-    Get your API key from: https://www.tumblr.com/oauth/apps
+  - tumblr_api_key is required. Tumblr labels this value as the 'OAuth Consumer Key' on the app registration page. Get your API key from: https://www.tumblr.com/oauth/apps
 ```
 
 ### Invalid Blog URL

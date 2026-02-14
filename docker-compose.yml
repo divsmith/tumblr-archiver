@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  tumblr-archiver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tumblr-archiver:latest
+    container_name: tumblr-archiver
+    
+    # Environment variables
+    environment:
+      - TUMBLR_API_KEY=${TUMBLR_API_KEY}
+      - PYTHONUNBUFFERED=1
+    
+    # Volume mounts
+    volumes:
+      # Mount local archives directory to container
+      - ./archives:/archives
+      # Optional: Mount config file (uncomment if needed)
+      # - ./config.json:/app/config.json:ro
+    
+    # Run as non-root user (UID 1001)
+    user: "1001:1001"
+    
+    # Resource limits (optional but recommended)
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          memory: 512M
+    
+    # Networks
+    networks:
+      - archiver-network
+    
+    # Restart policy
+    restart: "no"
+    
+    # Override command at runtime
+    # Example: docker-compose run tumblr-archiver archive myblog
+    command: ["--help"]
+
+networks:
+  archiver-network:
+    driver: bridge
+
+# Usage examples:
+#
+# 1. Set your API key in a .env file:
+#    echo "TUMBLR_API_KEY=your_api_key_here" > .env
+#
+# 2. Build the image:
+#    docker-compose build
+#
+# 3. Archive a blog:
+#    docker-compose run --rm tumblr-archiver archive myblog
+#
+# 4. Archive with options:
+#    docker-compose run --rm tumblr-archiver archive myblog --post-type photo --limit 100
+#
+# 5. Archive with output directory:
+#    docker-compose run --rm tumblr-archiver archive myblog --out /archives/myblog
+#
+# 6. Show help:
+#    docker-compose run --rm tumblr-archiver --help
+#
+# 7. Interactive shell for debugging:
+#    docker-compose run --rm --entrypoint /bin/bash tumblr-archiver

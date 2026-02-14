@@ -1,0 +1,93 @@
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+coverage.xml
+*.log
+
+# Development tools
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.pyre/
+.dmypy.json
+dmypy.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation (not needed in container)
+docs/
+*.md
+!README.md
+IMPLEMENTATION_*.md
+TEST_*.md
+INTEGRATION_*.md
+MANIFEST_*.md
+RECOVERY_*.md
+ARCHIVER_*.md
+DOWNLOADER_*.md
+
+# Environment files
+.env
+.env.*
+*.local
+
+# Output directories
+downloads/
+archives/
+output/
+tmp/
+
+# Examples and test data
+examples/
+tests/
+test_*.py
+conftest.py
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Other
+LICENSE
+PROMPT.md

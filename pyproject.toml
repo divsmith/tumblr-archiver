@@ -43,3 +43,8 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 tumblr_downloader = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-q"

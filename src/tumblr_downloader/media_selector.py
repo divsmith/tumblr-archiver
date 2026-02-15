@@ -9,8 +9,41 @@ the highest quality version of each media item.
 from typing import List, Dict, Optional, Any
 import logging
 import re
+from html.parser import HTMLParser
 
 logger = logging.getLogger(__name__)
+
+
+class ImageExtractor(HTMLParser):
+    """HTML parser to extract image URLs and dimensions from post bodies."""
+    
+    def __init__(self):
+        super().__init__()
+        self.images = []
+    
+    def handle_starttag(self, tag, attrs):
+        """Extract img tags with their src and dimensions."""
+        if tag == 'img':
+            attrs_dict = dict(attrs)
+            src = attrs_dict.get('src', '')
+            if src:
+                # Extract dimensions from data attributes
+                width = 0
+                height = 0
+                
+                try:
+                    if 'data-orig-width' in attrs_dict:
+                        width = int(attrs_dict['data-orig-width'])
+                    if 'data-orig-height' in attrs_dict:
+                        height = int(attrs_dict['data-orig-height'])
+                except (ValueError, TypeError):
+                    pass
+                
+                self.images.append({
+                    'url': src,
+                    'width': width,
+                    'height': height
+                })
 
 
 def extract_media_from_post(post: dict) -> List[dict]:
@@ -21,7 +54,9 @@ def extract_media_from_post(post: dict) -> List[dict]:
     post types (photo, video, audio) and returns a normalized list of media
     items with their metadata.
     
-    Args:
+    Args:if post_type == 'regular':
+            media_items.extend(_extract_regular(post, post_id))
+        el
         post: A Tumblr post dictionary from the API response
         
     Returns:
@@ -54,6 +89,8 @@ def extract_media_from_post(post: dict) -> List[dict]:
             media_items.extend(_extract_videos(post, post_id))
         elif post_type == 'audio':
             media_items.extend(_extract_audio(post, post_id))
+        elif post_type == 'regular':
+            media_items.extend(_extract_regular(post, post_id))
         else:
             logger.debug(f"Unsupported post type '{post_type}' for post {post_id}")
             
@@ -148,10 +185,8 @@ def select_best_image(variants: List[dict]) -> dict:
 
 def _extract_photos(post: dict, post_id: str) -> List[dict]:
     """
-    Extract photos from a photo post.
-    
-    Handles both single photos and photosets. For each photo, selects
-    the highest resolution available.
+    Extract v1 API photo posts which have photo-url-XXXX fields.
+    Selects the highest resolution available.
     
     Args:
         post: Tumblr post dictionary
@@ -161,71 +196,64 @@ def _extract_photos(post: dict, post_id: str) -> List[dict]:
         List of photo media items
     """
     media_items = []
-    photos = post.get('photos', [])
     
-    if not photos:
-        logger.debug(f"No photos found in photo post {post_id}")
-        return media_items
+    # v1 API uses photo-url-1280, photo-url-500, etc. fields
+    # Build variants from all photo-url-* fields
+    variants = []
     
-    for photo_idx, photo in enumerate(photos):
-        try:
-            if not isinstance(photo, dict):
-                logger.warning(f"Invalid photo object at index {photo_idx} in post {post_id}")
-                continue
+    # Known photo URL fields in order of preference
+    photo_url_fields = [
+        'photo-url-1280',
+        'photo-url-500', 
+        'photo-url-400',
+        'photo-url-250',
+        'photo-url-100',
+        'photo-url-75'
+    ]
+    
+    for field in photo_url_fields:
+        url = post.get(field)
+        if url:
+            # Extract size from field name
+            size_match = re.search(r'photo-url-(\d+)', field)
+            size = int(size_match.group(1)) if size_match else 0
             
-            # Get all available sizes
-            alt_sizes = photo.get('alt_sizes', [])
-            original_size = photo.get('original_size')
-            
-            # Build variants list
-            variants = []
-            
-            # Add original size if available
-            if original_size and isinstance(original_size, dict):
-                url = original_size.get('url')
-                if url:
-                    variants.append({
-                        'url': url,
-                        'width': original_size.get('width', 0),
-                        'height': original_size.get('height', 0)
-                    })
-            
-            # Add alternative sizes
-            if isinstance(alt_sizes, list):
-                for size in alt_sizes:
-                    if isinstance(size, dict):
-                        url = size.get('url')
-                        if url:
-                            variants.append({
-                                'url': url,
-                                'width': size.get('width', 0),
-                                'height': size.get('height', 0)
-                            })
-            
-            if not variants:
-                logger.warning(f"No valid sizes found for photo {photo_idx} in post {post_id}")
-                continue
-            
-            # Select best quality
-            best = select_best_image(variants)
-            
-            # Determine if it's an animated GIF
-            media_type = 'photo'
-            url = best['url']
-            if url and url.lower().endswith('.gif'):
-                media_type = 'gif'
-            
-            media_items.append({
-                'url': best['url'],
-                'width': best.get('width', 0),
-                'height': best.get('height', 0),
-                'type': media_type,
-                'post_id': post_id
+            variants.append({
+                'url': url,
+                'width': size,  # Use size as width approximation
+                'height': 0  # Height not directly available per variant
             })
-            
-        except Exception as e:
-            logger.error(f"Error processing photo {photo_idx} in post {post_id}: {e}")
-            continue
+    
+    # Get original dimensions if available
+    orig_width = post.get('width', 0) or 0
+    orig_height = post.get('height', 0) or 0
+    
+    if variants:
+        # Select best quality (usually photo-url-1280)
+        best = select_best_image(variants)
+        
+        # Use original dimensions if available
+        if orig_width and orig_height:
+            best['width'] = orig_width
+            best['height'] = orig_height
+        
+        # Determine if it's an animated GIF
+        media_type = 'photo'
+        url = best['url']
+        if url and url.lower().endswith('.gif'):
+            media_type = 'gif'
+        
+        media_items.append({
+            'url': best['url'],
+            'width': best.get('width', 0),
+            'height': best.get('height', 0),
+            'type': media_type,
+            'post_id': post_id
+        })
+        
+        logger.debug(f"Extracted photo from post {post_id}: {best['url']}")
+    else:
+        logger.warning(f"No photo URLs found in photo post {post_id}")
     
     return media_items
 
@@ -336,5 +364,59 @@ def _extract_audio(post: dict, post_id: str) -> List[dict]:
         })
     else:
         logger.warning(f"No audio URL found in audio post {post_id}")
+    
+    return media_items
+
+
+def _extract_regular(post: dict, post_id: str) -> List[dict]:
+    """
+    Extract images from a regular/text post.
+    
+    Regular posts contain HTML in the 'regular-body' field which may
+    include embedded images. This function parses the HTML and extracts
+    all image URLs with their dimensions.
+    
+    Args:
+        post: Tumblr post dictionary
+        post_id: Post ID for metadata
+        
+    Returns:
+        List of image media items found in the post body
+    """
+    media_items = []
+    
+    # Get the HTML body content
+    body = post.get('regular-body', '')
+    if not body:
+        logger.debug(f"No regular-body found in regular post {post_id}")
+        return media_items
+    
+    # Parse HTML to extract images
+    try:
+        parser = ImageExtractor()
+        parser.feed(body)
+        
+        for img in parser.images:
+            url = img.get('url', '')
+            if not url:
+                continue
+            
+            # Determine media type
+            media_type = 'photo'
+            if url.lower().endswith('.gif'):
+                media_type = 'gif'
+            
+            media_items.append({
+                'url': url,
+                'width': img.get('width', 0),
+                'height': img.get('height', 0),
+                'type': media_type,
+                'post_id': post_id
+            })
+            
+            logger.debug(f"Extracted image from regular post {post_id}: {url}")
+            
+    except Exception as e:
+        logger.error(f"Error parsing HTML in regular post {post_id}: {e}")
     
     return media_items
